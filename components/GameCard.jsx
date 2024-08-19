@@ -1,13 +1,39 @@
 import { useEffect, useRef } from "react";
-import { StyleSheet, Text, View, Image, Animated } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Animated,
+  Pressable,
+} from "react-native";
+import { Score } from "./Score";
+import { Link } from "expo-router";
+import { styled } from "nativewind";
+
+const StylePressable = styled(Pressable);
 export function GameCard({ game }) {
   return (
-    <View key={game.slug} style={styles.card}>
-      <Image source={{ uri: game.image }} style={styles.image} />
-      <Text style={styles.title}> {game.Title}</Text>
-      <Text style={styles.description}> {game.description}</Text>
-      <Text style={styles.score}> {game.score}</Text>
-    </View>
+    <Link asChild href={`/${game.slug}`} className="text-blue-400">
+      <StylePressable className="active:opacity-40 border border-black active:border-white/50 mb-2 bg-gray-500/10 rounded-xl p-4">
+        <View
+          key={game.slug}
+          className="flex-row bg-slate-500/10 p-4 rounded-xl gap-4 mb-10 m-2"
+        >
+          <Image source={{ uri: game.image }} style={styles.image} />
+          <View className="flex-shrink">
+            <Text className="text-white" style={styles.title}>
+              {game.title}
+            </Text>
+            <Score score={game.score} maxScore={100} />
+
+            <Text style={styles.description}>
+              {game.description.slice(0, 100)} ...
+            </Text>
+          </View>
+        </View>
+      </StylePressable>
+    </Link>
   );
 }
 
@@ -37,27 +63,14 @@ const styles = StyleSheet.create({
     height: 147,
     borderRadius: 10,
   },
-  card: {
-    marginBottom: 10,
-    borderRadius: 25,
-    backgroundColor: "#173540",
-    padding: 20,
-    marginHorizontal: 12,
-  },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+
     color: "#fff",
   },
   description: {
     fontSize: 16,
     color: "#fff",
-  },
-  score: {
-    color: "green",
-    fontSize: 20,
-    marginTop: 10,
-    fontWeight: "bold",
   },
 });

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getLatestGames } from "../lib/metacritic";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AnimatedGameCard } from "./GameCard";
-import { Logo } from "./Logo";
+import Screen from "./Screen";
 
 export function Main() {
   const [games, setGames] = useState([]);
@@ -15,11 +15,17 @@ export function Main() {
     });
   }, []);
 
+  //para hacer la funcionalidad pull to refres en el flatlist
+  const [refreshing, setRefreshing] = useState(false);
+  const HandleRefresh = () => {
+    setRefreshing(true);
+    getLatestGames().then((games) => {
+      setGames(games);
+    });
+    setRefreshing(false);
+  };
   return (
-    <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
-      <View style={{ marginBottom: 10, marginLeft: 10 }}>
-        <Logo />
-      </View>
+    <Screen>
       {games.length === 0 ? (
         <ActivityIndicator size={"large"} />
       ) : (
@@ -29,8 +35,10 @@ export function Main() {
           renderItem={({ item, index }) => (
             <AnimatedGameCard game={item} index={index} />
           )}
+          refreshing={refreshing}
+          onRefresh={HandleRefresh}
         />
       )}
-    </View>
+    </Screen>
   );
 }
